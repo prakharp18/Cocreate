@@ -1,15 +1,13 @@
-import { useState } from 'react'
+import { ChakraProvider, createSystem, defaultConfig } from "@chakra-ui/react";
+import LandingPage from "./components/Landingpage";
 
 
-function App() {  const [count, setCount] = useState(0)
+const system = createSystem(defaultConfig);
 
+export default function App() {
   return (
-    <>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <ChakraProvider value={system}>
+      <LandingPage />
+    </ChakraProvider>
+  );
 }
-
-export default App
