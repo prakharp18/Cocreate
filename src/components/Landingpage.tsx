@@ -1,10 +1,16 @@
 import React, { useRef } from "react";
 import { Box, Container, Heading, Text, Image, Button } from "@chakra-ui/react";
 import { ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import VariableProximity from "./VariableProximity";
 
 const LandingPage = () => {
   const containerRef = useRef(null);
+  const navigate = useNavigate();
+
+  const handleStartClick = () => {
+    navigate('/intro');
+  };
 
   return (
     <Box
@@ -70,6 +76,7 @@ const LandingPage = () => {
           />
 
           <Text
+            fontFamily="Satoshi, sans-serif"
             fontSize={{ base: "lg", md: "xl" }}
             color="gray.700"
             maxW="3xl"
@@ -85,6 +92,7 @@ const LandingPage = () => {
           <Box mt={4}>
             <Button
               bg="transparent"
+              fontFamily={"Satoshi, sans-serif"}
               border="2px solid"
               borderColor="green.700"
               color="green.700"
@@ -104,6 +112,7 @@ const LandingPage = () => {
               alignItems="center"
               gap={2}
               size="md"
+              onClick={handleStartClick}
             >
               Start
               <ChevronRight size={18} />
