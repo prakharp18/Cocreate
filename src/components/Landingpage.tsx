@@ -13,7 +13,7 @@ const LandingPage = () => {
       fontFamily="Satoshi, sans-serif"
       overflow="hidden"
     >
-      {/* Background */}
+      
       <Image
         src="/geminicreated.png"
         alt="background illustration"
@@ -22,17 +22,23 @@ const LandingPage = () => {
         w="100%"
         h="100%"
         objectFit="cover"
-        zIndex={0} /* place image behind content but above page background */
+        zIndex={0} 
+      />
+       <Box
+        position="absolute"
+        inset={0}
+        bg="whiteAlpha.100"
+        zIndex={0}
       />
 
-      {/* Top branding */}
+      
       <Box textAlign="center" py={6} zIndex={2}>
         <Heading as="h1" fontSize="2xl" fontWeight="700" color="green.800" letterSpacing="tight">
           CoCreate.
         </Heading>
       </Box>
 
-      {/* Main content */}
+      
       <Container
         maxW="5xl"
         zIndex={2}
@@ -50,7 +56,7 @@ const LandingPage = () => {
             workspace. No installs, no hassle, just a room key.
           </Text>
 
-          {/* Start Button - smaller and positioned below */}
+          
           <Box mt={4}>
             <Button
               bg="transparent"
