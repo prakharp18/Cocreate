@@ -2,8 +2,7 @@ import { ChakraProvider, createSystem, defaultConfig, Box, Text } from "@chakra-
 import LandingPage from "./components/Landingpage";
 import Intropage from "./components/Intropage";
 import AvatarSelection from "./components/Avatarselection";
-// Uncomment this when I'll create the UUIDScreen component
-// import UUIDScreen from "./components/UUIDScreen";
+import UUIDScreen from "./components/UUIDScreen";
 import { useState, useEffect } from "react";
 import { CountUp } from "use-count-up";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -51,12 +50,7 @@ export default function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/intro" element={<Intropage />} />
           <Route path="/avatar" element={<AvatarSelection />} />
-          <Route path="/uuid" element={
-            <div style={{ padding: '2rem', textAlign: 'center' }}>
-              <h1>UUID Screen - Coming Soon</h1>
-              <p>This screen will be implemented next.</p>
-            </div>
-          } />
+          <Route path="/uuid" element={<UUIDScreen />} />
         </Routes>
       </Router>
     </ChakraProvider>
