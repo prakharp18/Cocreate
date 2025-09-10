@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useUserStore } from "../store/userStore";
-import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
 import { Box, Button, Text, Image } from "@chakra-ui/react";
 import { Lock } from "lucide-react";
@@ -8,22 +7,36 @@ import DecryptedText from "./DecryptedText";
 
 const UUIDScreen = () => {
   const { name, avatar } = useUserStore();
-  const [uuid, setUuid] = useState("");
+  const [roomId, setRoomId] = useState("");
+  const [roomUrl, setRoomUrl] = useState("");
+  const [createdAt, setCreatedAt] = useState("");
   const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
 
+  
+  const generateRoomId = () => {
+    return `room-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+  };
+
   useEffect(() => {
-    setUuid(uuidv4()); 
+    const id = generateRoomId();
+    setRoomId(id);
+
+    const url = `${window.location.origin}/room/${id}`;
+    setRoomUrl(url);
+
+    const date = new Date();
+    setCreatedAt(date.toLocaleString());
   }, []);
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(uuid);
+    await navigator.clipboard.writeText(roomUrl);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000); 
+    setTimeout(() => setCopied(false), 2000);
   };
 
   const handleStart = () => {
-    navigate("/editor"); 
+    navigate(`/room/${roomId}`);
   };
 
   return (
@@ -34,10 +47,9 @@ const UUIDScreen = () => {
       alignItems="center"
       justifyContent="center"
       p={6}
-      bg="gray.50"
+      bg="#F7F6EF"
       fontFamily="Satoshi, sans-serif"
     >
-      
       <Box mb={6}>
         <Lock size={48} color="#16a34a" />
       </Box>
@@ -46,7 +58,6 @@ const UUIDScreen = () => {
         Your Session is Ready 🚀
       </Text>
 
-      
       <Box display="flex" flexDirection="column" alignItems="center" mb={8}>
         {avatar && (
           <Image
@@ -64,7 +75,6 @@ const UUIDScreen = () => {
         </Text>
       </Box>
 
-      
       <Box
         bg="white"
         border="1px solid"
@@ -72,13 +82,15 @@ const UUIDScreen = () => {
         px={4}
         py={3}
         rounded="md"
-        mb={4}
+        mb={2}
         fontSize="lg"
         fontWeight="500"
         position="relative"
+        maxW="100%"
+        overflowX="auto"
       >
         <DecryptedText
-          text={uuid}
+          text={roomUrl}
           speed={30}
           maxIterations={15}
           animateOn="view"
@@ -87,17 +99,21 @@ const UUIDScreen = () => {
         />
       </Box>
 
+      {createdAt && (
+        <Text fontSize="sm" color="gray.500" mb={4}>
+          Created at: {createdAt}
+        </Text>
+      )}
+
       <Button
         colorScheme="green"
         variant="outline"
         mb={8}
         onClick={handleCopy}
-        position="relative"
       >
-        {copied ? "Copied!" : "Copy UUID"}
+        {copied ? "Copied!" : "Copy Room Link"}
       </Button>
 
-      
       <Button
         colorScheme="green"
         size="lg"

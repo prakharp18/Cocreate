@@ -25,7 +25,10 @@ const AvatarSelection = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100">
+    <div
+      className="flex flex-col items-center justify-center min-h-screen p-4"
+      style={{ backgroundColor: '#F7F6EF' }}
+    >
       <h1 className="text-3xl font-bold mb-6">Select Your Avatar</h1>
       <p className="mb-4 text-lg">Hello, {name || "User"}!</p>
       <div className="flex gap-4 flex-wrap justify-center mb-6">
