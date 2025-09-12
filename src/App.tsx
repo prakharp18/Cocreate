@@ -1,11 +1,13 @@
 import { ChakraProvider, createSystem, defaultConfig, Box, Text } from "@chakra-ui/react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { CountUp } from "use-count-up";
 import LandingPage from "./components/Landingpage";
 import Intropage from "./components/Intropage";
 import AvatarSelection from "./components/Avatarselection";
 import UUIDScreen from "./components/UUIDScreen";
-import { useState, useEffect } from "react";
-import { CountUp } from "use-count-up";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import SplitEditor from "./components/SplitEditor";
+import LimitingScreen from "./components/LimitingScreen";
 
 const system = createSystem(defaultConfig);
 
@@ -51,6 +53,9 @@ export default function App() {
           <Route path="/intro" element={<Intropage />} />
           <Route path="/avatar" element={<AvatarSelection />} />
           <Route path="/uuid" element={<UUIDScreen />} />
+          <Route path="/room/:roomId" element={<SplitEditor />} />
+          <Route path="/room-full" element={<LimitingScreen />} />
+          <Route path="*" element={<LandingPage />} />
         </Routes>
       </Router>
     </ChakraProvider>
