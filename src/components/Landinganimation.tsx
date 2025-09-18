@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { CountUp } from "react-bits";
+import { useEffect, useState } from "react";
+import CountUp from "use-count-up";
 
-const StartupAnimation = ({ onFinish }) => {
+const StartupAnimation = ({ onFinish }: { onFinish: () => void }) => {
   const [done, setDone] = useState(false);
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { Box, Container, Heading, Text, Image, Button } from "@chakra-ui/react";
 import { ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";

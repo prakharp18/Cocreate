@@ -37,8 +37,8 @@ export default function App() {
               end={100}
               duration={5}
               easing="easeOutCubic"
-              suffix="%"
             />
+            <Text as="span">%</Text>
           </Text>
         </Box>
       </ChakraProvider>
