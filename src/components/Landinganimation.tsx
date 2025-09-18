@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
-import CountUp from "use-count-up";
+import { useCountUp } from "use-count-up";
 
 const StartupAnimation = ({ onFinish }: { onFinish: () => void }) => {
   const [done, setDone] = useState(false);
+  
+  const { value } = useCountUp({
+    isCounting: true,
+    end: 100,
+    duration: 2,
+    onComplete: () => setDone(true),
+  });
 
   useEffect(() => {
     if (done) {
@@ -15,13 +22,9 @@ const StartupAnimation = ({ onFinish }: { onFinish: () => void }) => {
 
   return (
     <div className="flex items-center justify-center h-screen w-screen bg-black">
-      <CountUp
-        from={0}
-        to={100}
-        duration={2000}
-        className="text-6xl font-bold text-white"
-        onComplete={() => setDone(true)}
-      />
+      <div className="text-6xl font-bold text-white">
+        {value}
+      </div>
     </div>
   );
 };

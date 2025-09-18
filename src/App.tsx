@@ -1,7 +1,7 @@
 import { ChakraProvider, createSystem, defaultConfig, Box, Text } from "@chakra-ui/react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
-import CountUp from "use-count-up";
+import { useCountUp } from "use-count-up";
 import LandingPage from "./components/Landingpage";
 import Intropage from "./components/Intropage";
 import AvatarSelection from "./components/Avatarselection";
@@ -13,6 +13,13 @@ const system = createSystem(defaultConfig);
 
 export default function App() {
   const [showLanding, setShowLanding] = useState(false);
+  
+  const { value } = useCountUp({
+    isCounting: true,
+    end: 100,
+    duration: 5,
+    easing: "easeOutCubic",
+  });
 
   useEffect(() => {
     const timer = setTimeout(() => setShowLanding(true), 5000);
@@ -32,12 +39,7 @@ export default function App() {
           fontFamily="Satoshi, sans-serif"
         >
                     <Text fontSize={{ base: "4xl", md: "6xl" }} fontWeight="700">
-            <CountUp
-              isCounting
-              end={100}
-              duration={5}
-              easing="easeOutCubic"
-            />
+            {value}
             <Text as="span">%</Text>
           </Text>
         </Box>
