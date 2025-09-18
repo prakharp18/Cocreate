@@ -99,9 +99,11 @@ const SplitEditor: React.FC = () => {
     ydocRef.current = ydoc;
 
     try {
-      const wsUrl = import.meta.env.PROD
-        ? `wss://${window.location.hostname}/ws`
-        : `ws://localhost:1234`;
+      // Use environment variable for WebSocket URL in production
+      const wsUrl = import.meta.env.VITE_WS_URL || 
+        (import.meta.env.PROD
+          ? `wss://${window.location.hostname}/ws`
+          : `ws://localhost:1234`);
 
       const provider = new WebsocketProvider(wsUrl, roomId, ydoc);
       providerRef.current = provider;

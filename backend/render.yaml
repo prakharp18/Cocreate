@@ -1,0 +1,17 @@
+# Render Deployment Configuration
+# This file helps Render understand how to deploy your backend
+
+# Build Command: npm install
+# Start Command: npm start
+
+# Environment Variables to set on Render:
+# RAPIDAPI_KEY=your_rapidapi_key_here
+# RAPIDAPI_HOST=judge0-ce.p.rapidapi.com
+# NODE_ENV=production
+# MAX_PARTICIPANTS=4
+# PORT=10000 (Render will set this automatically)
+
+# Auto-scaling:
+# Instances: 1
+# Memory: 512MB
+# CPU: 0.25
