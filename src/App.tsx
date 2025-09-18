@@ -1,7 +1,7 @@
 import { ChakraProvider, createSystem, defaultConfig, Box, Text } from "@chakra-ui/react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { CountUp } from "use-count-up";
+import CountUp from "use-count-up";
 import LandingPage from "./components/Landingpage";
 import Intropage from "./components/Intropage";
 import AvatarSelection from "./components/Avatarselection";
@@ -31,7 +31,7 @@ export default function App() {
           color="green.400"
           fontFamily="Satoshi, sans-serif"
         >
-          <Text fontSize={{ base: "4xl", md: "6xl" }} fontWeight="700">
+                    <Text fontSize={{ base: "4xl", md: "6xl" }} fontWeight="700">
             <CountUp
               isCounting
               end={100}

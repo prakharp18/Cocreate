@@ -31,7 +31,7 @@ const LimitingScreen: React.FC<LimitingScreenProps> = ({ roomId, onRetry }) => {
       fontFamily="Satoshi, sans-serif"
       p={6}
     >
-      <VStack gap={6} textAlign="center">
+            <VStack gap={6} textAlign="center">
         <Users size={60} color="#f56565" />
         <Text fontSize="2xl" fontWeight="bold">
           😅 Oops! This room is full (4/4).
@@ -44,7 +44,7 @@ const LimitingScreen: React.FC<LimitingScreenProps> = ({ roomId, onRetry }) => {
         <Text fontSize="md" color="gray.600">
           Start a new room or wait for someone to leave.
         </Text>
-        <VStack gap={3}>
+                <VStack gap={3}>
           <Button colorScheme="green" size="lg" onClick={handleCreateNew}>
             Create New Room
           </Button>
