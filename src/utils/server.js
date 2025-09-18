@@ -1,4 +1,3 @@
-// server.js
 import { WebSocketServer } from 'ws';
 import * as Y from 'yjs';
 import * as encoding from 'lib0/encoding';
@@ -81,16 +80,13 @@ wss.on('connection', (ws, req) => {
   
   const url = new URL(req.url, `http://${req.headers.host}`);
   let roomId = url.searchParams.get('room');
-  
-  // If no query param, try to extract from pathname (y-websocket format: /roomname)
-  if (!roomId) {
+    if (!roomId) {
     const pathParts = url.pathname.split('/').filter(Boolean);
     roomId = pathParts[0] || 'default-room';
   }
   
   console.log(`Connection attempt for room: ${roomId}`);
   
-  // Initialize room if it doesn't exist
   if (!rooms.has(roomId)) {
     const doc = new Y.Doc();
     const awareness = new awarenessProtocol.Awareness(doc);
@@ -108,14 +104,12 @@ wss.on('connection', (ws, req) => {
   if (room.connections.size >= MAX_PARTICIPANTS) {
     console.log(`Room ${roomId} is full (${room.connections.size}/${MAX_PARTICIPANTS}), rejecting connection`);
     
-    // Send room full message and close connection
     ws.send(JSON.stringify({ 
       type: 'room_full', 
       message: 'Room has reached maximum capacity',
       maxParticipants: MAX_PARTICIPANTS 
     }));
     
-    // Give a moment for the message to be received
     setTimeout(() => {
       ws.close(1000, 'Room is full');
     }, 100);
@@ -152,8 +146,8 @@ wss.on('connection', (ws, req) => {
   ws.on('close', () => {
     room.connections.delete(ws);
     console.log(`Client left room ${roomId} (${room.connections.size}/${MAX_PARTICIPANTS} participants)`);
-    
-    // Clean up empty rooms
+
+    // Cleaning
     if (room.connections.size === 0) {
       rooms.delete(roomId);
       console.log(`Room ${roomId} deleted (empty)`);

@@ -165,21 +165,71 @@ const SplitEditor: React.FC = () => {
     };
   }, [roomId, language, roomFull]);
 
-  const handleRunCode = (withInput: boolean = false) => {
+  const handleRunCode = async (withInput: boolean = false) => {
     if (!viewRef.current) return;
     setIsRunning(true);
+    setOutput("Executing...");
 
     const code = viewRef.current.state.doc.toString();
-    console.log("Executing code:", code, withInput ? testInput : "");
+    const input = withInput ? testInput : "";
 
-    setTimeout(() => {
-      let result = `Output:\nHello from ${language.toUpperCase()}`;
-      if (withInput && testInput) {
-        result += `\nWith Input: ${testInput}`;
+    // Use backend API instead of directly calling Judge0
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+
+    try {
+      const response = await fetch(`${backendUrl}/api/execute`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          code,
+          language,
+          input
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Backend error: ${response.status}`);
       }
-      setOutput(result);
+
+      const result = await response.json();
+      
+      let output = result.output;
+      
+      // Add execution details if available
+      if (result.executionTime || result.memory) {
+        const details = [];
+        if (result.executionTime) details.push(`Time: ${result.executionTime}`);
+        if (result.memory) details.push(`Memory: ${result.memory}`);
+        output += `\n\n--- Execution Details ---\n${details.join(' | ')}`;
+      }
+
+      // Add input if provided
+      if (withInput && input) {
+        output = `Input:\n${input}\n\nOutput:\n${output}`;
+      }
+
+      setOutput(output);
       setIsRunning(false);
-    }, 1500);
+
+    } catch (error) {
+      console.error("Code execution error:", error);
+      let errorMessage = "Unknown error occurred";
+      
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
+      // Handle common backend connection errors
+      if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError')) {
+        errorMessage = "Backend server is not running. Please start the backend server on port 5000.";
+      }
+      
+      setOutput(`Error: ${errorMessage}`);
+      setIsRunning(false);
+    }
   };
 
   const handleLeaveRoom = () => {
