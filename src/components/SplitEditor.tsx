@@ -55,6 +55,24 @@ const SplitEditor: React.FC = () => {
   const [connectionStatus, setConnectionStatus] = useState<string>("connecting");
   const [roomFull, setRoomFull] = useState<boolean>(false);
   const [participantCount, setParticipantCount] = useState<number>(1);
+  const [backendStatus, setBackendStatus] = useState<string>("unknown");
+
+  // Test backend connection
+  const testBackendConnection = async () => {
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+    try {
+      setBackendStatus("testing...");
+      const response = await fetch(`${backendUrl}/api/health`);
+      if (response.ok) {
+        const data = await response.json();
+        setBackendStatus(`✅ Connected - ${data.status}`);
+      } else {
+        setBackendStatus(`❌ Error ${response.status}`);
+      }
+    } catch (error) {
+      setBackendStatus(`❌ Failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  };
 
   // Handle split 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
@@ -298,6 +316,22 @@ Debug Info:
         </Text>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <Text fontSize="sm">Participants: {participantCount}/4</Text>
+          <Text fontSize="xs" color={backendStatus.includes('✅') ? 'green.500' : 'red.500'}>
+            Backend: {backendStatus}
+          </Text>
+          <button
+            onClick={testBackendConnection}
+            style={{
+              padding: '4px 8px',
+              borderRadius: 4,
+              border: '1px solid #ccc',
+              background: '#f0f0f0',
+              cursor: 'pointer',
+              fontSize: '12px'
+            }}
+          >
+            Test Backend
+          </button>
           <button
             onClick={handleLeaveRoom}
             style={{

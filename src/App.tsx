@@ -74,7 +74,7 @@ export default function App() {
   }, [assetsLoaded]);
 
   useEffect(() => {
-    if (assetsLoaded && value >= 100) {
+    if (assetsLoaded && value !== undefined && typeof value === 'number' && value >= 100) {
       const delayTimer = setTimeout(() => setShowLanding(true), 500);
       return () => clearTimeout(delayTimer);
     }
@@ -95,7 +95,7 @@ export default function App() {
           gap={4}
         >
           <Text fontSize={{ base: "4xl", md: "6xl" }} fontWeight="700">
-            {Math.floor(value)}
+            {typeof value === 'number' ? Math.floor(value) : 0}
             <Text as="span">%</Text>
           </Text>
           <Box
@@ -106,7 +106,7 @@ export default function App() {
             overflow="hidden"
           >
             <Box
-              width={`${value}%`}
+              width={`${typeof value === 'number' ? value : 0}%`}
               height="100%"
               bg="green.400"
               transition="width 0.1s ease"
