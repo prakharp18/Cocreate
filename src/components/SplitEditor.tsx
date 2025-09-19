@@ -175,11 +175,18 @@ const SplitEditor: React.FC = () => {
     const code = viewRef.current.state.doc.toString();
     const input = withInput ? testInput : "";
 
-    // Use backend API instead of directly calling Judge0
     const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+    
+    console.log("🔍 Debug Info:");
+    console.log("Environment:", import.meta.env.MODE);
+    console.log("Backend URL:", backendUrl);
+    console.log("All env vars:", import.meta.env);
 
     try {
-      const response = await fetch(`${backendUrl}/api/execute`, {
+      const apiUrl = `${backendUrl}/api/execute`;
+      console.log("🚀 Making request to:", apiUrl);
+      
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -191,16 +198,20 @@ const SplitEditor: React.FC = () => {
         })
       });
 
+      console.log("📡 Response status:", response.status);
+      console.log("📡 Response headers:", response.headers);
+
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `Backend error: ${response.status}`);
+        const errorText = await response.text();
+        console.error("❌ Error response:", errorText);
+        throw new Error(`Backend error: ${response.status} - ${errorText}`);
       }
 
       const result = await response.json();
+      console.log("✅ Success response:", result);
       
       let output = result.output;
       
-      // Add execution details if available
       if (result.executionTime || result.memory) {
         const details = [];
         if (result.executionTime) details.push(`Time: ${result.executionTime}`);
@@ -208,7 +219,6 @@ const SplitEditor: React.FC = () => {
         output += `\n\n--- Execution Details ---\n${details.join(' | ')}`;
       }
 
-      // Add input if provided
       if (withInput && input) {
         output = `Input:\n${input}\n\nOutput:\n${output}`;
       }
@@ -217,16 +227,19 @@ const SplitEditor: React.FC = () => {
       setIsRunning(false);
 
     } catch (error) {
-      console.error("Code execution error:", error);
+      console.error("💥 Code execution error:", error);
       let errorMessage = "Unknown error occurred";
       
       if (error instanceof Error) {
         errorMessage = error.message;
       }
       
-      // Handle common backend connection errors
       if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError')) {
-        errorMessage = "Backend server is not running. Please start the backend server on port 5000.";
+        errorMessage = `Backend server connection failed. 
+Debug Info:
+- Trying to connect to: ${backendUrl}
+- Environment: ${import.meta.env.MODE}
+- Check if backend is running at: ${backendUrl}/api/health`;
       }
       
       setOutput(`Error: ${errorMessage}`);
@@ -254,6 +267,18 @@ const SplitEditor: React.FC = () => {
     navigate('/');
   };
 
+  const handleTestBackend = async () => {
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+    try {
+      setOutput("Testing backend connection...");
+      const response = await fetch(`${backendUrl}/api/health`);
+      const data = await response.json();
+      setOutput(`Backend Status: ${JSON.stringify(data, null, 2)}`);
+    } catch (error) {
+      setOutput(`Backend Test Failed: ${error instanceof Error ? error.message : 'Unknown error'}\nURL: ${backendUrl}`);
+    }
+  };
+
   if (roomFull) {
     return (
       <LimitingScreen
@@ -267,7 +292,6 @@ const SplitEditor: React.FC = () => {
 
   return (
     <Box minH="100vh" bg="#F7F6EF" p={4}>
-      {/* Header */}
       <Box mb={4} display="flex" justifyContent="space-between">
         <Text fontSize="xl" fontWeight="bold">
           Room: {roomId} ({connectionStatus})
@@ -300,6 +324,9 @@ const SplitEditor: React.FC = () => {
         </button>
         <button disabled={isRunning} onClick={() => handleRunCode(true)} style={{ padding: '6px 12px' }}>
           {isRunning ? 'Running...' : 'Run with Input'}
+        </button>
+        <button onClick={handleTestBackend} style={{ padding: '6px 12px', backgroundColor: '#e2e8f0' }}>
+          Test Backend
         </button>
       </div>
 

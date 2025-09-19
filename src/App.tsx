@@ -13,6 +13,7 @@ const system = createSystem(defaultConfig);
 
 export default function App() {
   const [showLanding, setShowLanding] = useState(false);
+  const [assetsLoaded, setAssetsLoaded] = useState(false);
   
   const { value } = useCountUp({
     isCounting: true,
@@ -22,9 +23,62 @@ export default function App() {
   });
 
   useEffect(() => {
-    const timer = setTimeout(() => setShowLanding(true), 5000);
-    return () => clearTimeout(timer);
+    const preloadAssets = async () => {
+      const imagesToPreload = [
+        '/geminicreated.png',
+        '/logo.png',
+      ];
+
+      const imagePromises = imagesToPreload.map((src) => {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = resolve;
+          img.onerror = reject;
+          img.src = src;
+        });
+      });
+
+      const fontPromises = [
+        new FontFace('Satoshi', "url('https://fonts.cdnfonts.com/s/10566/Satoshi-Regular.woff2')").load(),
+        new FontFace('Satoshi', "url('https://fonts.cdnfonts.com/s/10566/Satoshi-Bold.woff2')", { weight: '700' }).load(),
+      ];
+
+      try {
+        await Promise.allSettled(imagePromises);
+        
+        const loadedFonts = await Promise.allSettled(fontPromises);
+        loadedFonts.forEach((result) => {
+          if (result.status === 'fulfilled') {
+            document.fonts.add(result.value);
+          }
+        });
+
+        setAssetsLoaded(true);
+      } catch {
+        console.log('Some assets failed to preload, continuing anyway');
+        setAssetsLoaded(true);
+      }
+    };
+
+    preloadAssets();
   }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (assetsLoaded) {
+        setShowLanding(true);
+      }
+    }, 5000);
+    
+    return () => clearTimeout(timer);
+  }, [assetsLoaded]);
+
+  useEffect(() => {
+    if (assetsLoaded && value >= 100) {
+      const delayTimer = setTimeout(() => setShowLanding(true), 500);
+      return () => clearTimeout(delayTimer);
+    }
+  }, [assetsLoaded, value]);
 
   if (!showLanding) {
     return (
@@ -32,15 +86,34 @@ export default function App() {
         <Box
           minH="100vh"
           display="flex"
+          flexDirection="column"
           alignItems="center"
           justifyContent="center"
           bg="black"
           color="green.400"
           fontFamily="Satoshi, sans-serif"
+          gap={4}
         >
-                    <Text fontSize={{ base: "4xl", md: "6xl" }} fontWeight="700">
-            {value}
+          <Text fontSize={{ base: "4xl", md: "6xl" }} fontWeight="700">
+            {Math.floor(value)}
             <Text as="span">%</Text>
+          </Text>
+          <Box
+            width="200px"
+            height="2px"
+            bg="gray.800"
+            borderRadius="full"
+            overflow="hidden"
+          >
+            <Box
+              width={`${value}%`}
+              height="100%"
+              bg="green.400"
+              transition="width 0.1s ease"
+            />
+          </Box>
+          <Text fontSize="sm" opacity={0.7}>
+            {assetsLoaded ? 'Assets loaded' : 'Loading assets...'}
           </Text>
         </Box>
       </ChakraProvider>
