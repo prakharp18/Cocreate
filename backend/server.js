@@ -10,14 +10,32 @@ const PORT = process.env.PORT || 5000;
 // Security middleware
 app.use(helmet({
   contentSecurityPolicy: false,
-  crossOriginEmbedderPolicy: false
+  crossOriginEmbedderPolicy: false,
+  hsts: false // Disable HSTS for development
 }));
 
+// CORS configuration - more permissive for debugging
 app.use(cors({
-  origin: ['https://cocreatepizza.vercel.app', 'http://localhost:5173'],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = [
+      'https://cocreatepizza.vercel.app',
+      'http://localhost:5173',
+      'http://localhost:3000'
+    ];
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log('CORS blocked origin:', origin);
+      callback(null, true); // Allow all origins for now to debug
+    }
+  },
   credentials: true,
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ['GET', 'POST', 'OPTIONS', 'HEAD'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
 // Rate limiting
@@ -39,14 +57,37 @@ const JUDGE0_LANGUAGE_IDS = {
   cpp: 54      // C++ (GCC 9.2.0)
 };
 
-// Health check endpoint
+// Basic root endpoint for testing
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'Cocreate Backend Server',
+    status: 'running',
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      health: '/api/health',
+      execute: '/api/execute'
+    }
+  });
+});
+
+// Health check endpoint with more debugging
 app.get('/api/health', (req, res) => {
-  console.log('Health check requested');
+  console.log('Health check requested from:', req.get('Origin') || 'No origin');
+  console.log('User-Agent:', req.get('User-Agent'));
+  console.log('Request headers:', req.headers);
+  
+  res.set({
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type'
+  });
+  
   res.status(200).json({ 
     status: 'OK', 
     timestamp: new Date().toISOString(),
     port: PORT,
-    env: process.env.NODE_ENV
+    env: process.env.NODE_ENV,
+    message: 'Backend is running properly'
   });
 });
 

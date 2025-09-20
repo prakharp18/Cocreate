@@ -322,12 +322,11 @@ Debug Info:
           <button
             onClick={testBackendConnection}
             style={{
-              padding: '4px 8px',
-              borderRadius: 4,
-              border: '1px solid #ccc',
-              background: '#f0f0f0',
-              cursor: 'pointer',
-              fontSize: '12px'
+              padding: '6px 10px',
+              borderRadius: 6,
+              border: '1px solid #ddd',
+              background: '#fff',
+              cursor: 'pointer'
             }}
           >
             Test Backend
